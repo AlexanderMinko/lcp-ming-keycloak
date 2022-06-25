@@ -1,4 +1,4 @@
-package com.lenovo.configiration;
+package com.lenovo.configuration;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

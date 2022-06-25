@@ -1,4 +1,6 @@
-package com.lenovo;
+package com.lenovo.spi;
+
+import com.lenovo.configuration.Configuration;
 
 import org.apache.log4j.BasicConfigurator;
 import org.jboss.logging.Logger;
@@ -11,6 +13,9 @@ public class CustomIdentityProviderAuthenticatorFactory extends IdpCreateUserIfU
   private static final Logger LOGGER = Logger.getLogger(CustomIdentityProviderAuthenticatorFactory.class);
   private static final CustomIdentityProviderAuthenticator SINGLETON = new CustomIdentityProviderAuthenticator();
   private static final String PROVIDER_ID = "identity-provider-authenticator";
+
+  private static final String EXTENSION = "identity-provider-extension";
+  private static final String KAFKA_SERVER_URL = "kafkaServerUrl";
 
   public CustomIdentityProviderAuthenticatorFactory() {
     BasicConfigurator.configure();
@@ -33,10 +38,10 @@ public class CustomIdentityProviderAuthenticatorFactory extends IdpCreateUserIfU
 
   @Override
   public void init(Config.Scope config) {
-    LOGGER.info("INIT CONFIG");
-    final var internalLcpUserConfig = Config.scope("identity-provider-extension", PROVIDER_ID);
-    System.out.println(internalLcpUserConfig);
-    System.out.println("init");
+    final var internalLcpUserConfig = Config.scope(EXTENSION, PROVIDER_ID);
+    final var configurations = new Configuration(internalLcpUserConfig.get(KAFKA_SERVER_URL));
+    SINGLETON.setConfigurations(configurations);
+    LOGGER.info("Configurations " + configurations);
   }
 
   @Override

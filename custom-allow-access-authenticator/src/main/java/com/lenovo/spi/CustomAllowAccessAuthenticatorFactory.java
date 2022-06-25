@@ -1,4 +1,6 @@
-package com.lenovo;
+package com.lenovo.spi;
+
+import com.lenovo.configuration.Configuration;
 
 import org.apache.log4j.BasicConfigurator;
 import org.jboss.logging.Logger;
@@ -11,6 +13,9 @@ public class CustomAllowAccessAuthenticatorFactory extends AllowAccessAuthentica
   private static final Logger LOGGER = Logger.getLogger(CustomAllowAccessAuthenticatorFactory.class);
   private static final CustomAllowAccessAuthenticator SINGLETON = new CustomAllowAccessAuthenticator();
   private static final String PROVIDER_ID = "custom-allow-access-authenticator";
+
+  private static final String EXTENSION = "custom-allow-access-extension";
+  private static final String KAFKA_SERVER_URL = "kafkaServerUrl";
 
   public CustomAllowAccessAuthenticatorFactory() {
     BasicConfigurator.configure();
@@ -33,14 +38,14 @@ public class CustomAllowAccessAuthenticatorFactory extends AllowAccessAuthentica
 
   @Override
   public void init(Config.Scope config) {
-    LOGGER.info("INIT CONFIG");
-    final var internalLcpUserConfig = Config.scope("allow-access-authenticator-extension", PROVIDER_ID);
-    System.out.println(internalLcpUserConfig);
-    System.out.println("init");
+    final var internalLcpUserConfig = Config.scope(EXTENSION, PROVIDER_ID);
+    final var configurations = new Configuration(internalLcpUserConfig.get(KAFKA_SERVER_URL));
+    SINGLETON.setConfigurations(configurations);
+    LOGGER.info("Configurations " + configurations);
   }
 
   @Override
   public String getHelpText() {
-    return "Validates a password from login form. Username may be already known from identity provider authentication";
+    return "Custom allow access authenticator. Help to get access to user authenticates via identity providers";
   }
 }

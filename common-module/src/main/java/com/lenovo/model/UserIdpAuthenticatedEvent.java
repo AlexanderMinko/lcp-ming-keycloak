@@ -9,11 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserAuthenticatedEvent extends Event {
+public class UserIdpAuthenticatedEvent extends Event {
   private String id;
-  private String username;
-  private String email;
-  private String firstName;
-  private String lastName;
   private String realmName;
 }

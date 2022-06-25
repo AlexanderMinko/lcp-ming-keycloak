@@ -1,6 +1,9 @@
-package com.lenovo;
+package com.lenovo.spi;
 
 import java.util.Objects;
+
+import com.lenovo.configuration.Configuration;
+import com.lenovo.service.EventService;
 
 import org.jboss.logging.Logger;
 import org.keycloak.authentication.AuthenticationFlowContext;
@@ -13,17 +16,28 @@ public class CustomIdentityProviderAuthenticator extends IdpCreateUserIfUniqueAu
 
   private static final Logger LOGGER = Logger.getLogger(CustomIdentityProviderAuthenticator.class);
 
+  private Configuration configurations;
+  private final EventService eventService = EventService.getInstance();
+
   @Override
   protected void userRegisteredSuccess(
       AuthenticationFlowContext context,
       UserModel registeredUser,
       SerializedBrokeredIdentityContext serializedCtx,
       BrokeredIdentityContext brokerContext) {
-    if (Objects.isNull(registeredUser)) {
-      LOGGER.info("NO USER");
+    if (Objects.nonNull(registeredUser)) {
+      var realmName = context.getRealm().getName();
+      var lcpCustomerRole = context.getRealm().getRole("lcp_customer");
+      registeredUser.grantRole(lcpCustomerRole);
+      eventService.publishUserIpdRegisteredEvent(registeredUser, realmName);
     } else {
-      LOGGER.info("Registered user info => " + registeredUser.getUsername() + " " + registeredUser.getEmail() + " " + registeredUser.getId() + " " + registeredUser.getFirstName());
+      LOGGER.info("User didn't successfully register via Identity Provider");
     }
+  }
+
+  public void setConfigurations(final Configuration configurations) {
+    this.configurations = configurations;
+    this.eventService.configure(configurations.getKafkaServerUrl());
   }
 
 }

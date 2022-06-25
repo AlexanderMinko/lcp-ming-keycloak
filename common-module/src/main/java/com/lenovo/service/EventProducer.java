@@ -24,10 +24,10 @@ public class EventProducer {
     var producerFactory = new DefaultKafkaProducerFactory<String, Event>(config);
     kafkaTemplate = new KafkaTemplate<>(producerFactory);
     initialized = true;
-    LOGGER.info(EventProducer.class.getName() + " initialized! " + " URL => " + kafkaServerUrl);
+    LOGGER.info(EventProducer.class.getName() + " initialized! " + " Kafka URL => " + kafkaServerUrl);
   }
 
-  public void sendEvent(Event event) {
+  public void send(Event event) {
     kafkaTemplate.send(event.getTopicName(), event);
     LOGGER.info("Event send: " + event);
   }

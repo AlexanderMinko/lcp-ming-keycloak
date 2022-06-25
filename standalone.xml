@@ -494,16 +494,13 @@
                 <provider name="identity-provider-authenticator" enabled="true">
                     <properties>
                         <property name="kafkaServerUrl" value="${env.KAFKA_BROKER_URL:localhost:9092}"/>
-                        <property name="userProvisioningKafkaTopic" value="${env.USER_PROVISIONING_TOPIC:lcp-user-provisioning-events}"/>
-                        <property name="userAuthenticatedKafkaTopic" value="${env.USER_AUTHENTICATED_TOPIC:lcp-user-authenticated-events}"/>
-                        <property name="sendEmailKafkaTopic" value="${env.SEND_EMAIL_TOPIC:lcp-send-email-events}"/>
                     </properties>
                 </provider>
             </spi>
-            <spi name="allow-access-authenticator-extension">
+            <spi name="custom-allow-access-extension">
                 <provider name="custom-allow-access-authenticator" enabled="true">
                     <properties>
-                        <property name="kafkaServerUrl" value="${env.KAFKA_BROKER_URL:kafka:9092}"/>
+                        <property name="kafkaServerUrl" value="${env.KAFKA_BROKER_URL:localhost:9092}"/>
                     </properties>
                 </provider>
             </spi>
